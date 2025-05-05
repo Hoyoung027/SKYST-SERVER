@@ -41,7 +41,7 @@ jobs:
       - name: Copy JAR to server
         run: |
           scp build/libs/*.jar \
-            ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:${{ secrets.REMOTE_APP_PATH }}/scent-yonsei.jar
+            ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:${{ secrets.REMOTE_APP_PATH }}/dopamine.jar
 
       # 6) 서버에서 기존 프로세스 종료하고, 외부 application.yml 참조하여 재시작
       - name: Restart service on server
@@ -51,7 +51,7 @@ jobs:
             pkill -f 'java -jar' || true
 
             # (2) external application.yml 을 읽어 실행
-            nohup java -jar ${{ secrets.REMOTE_APP_PATH }}/scent-yonsei.jar \
+            nohup java -jar ${{ secrets.REMOTE_APP_PATH }}/dopamine.jar \
               --spring.config.location=file:${{ secrets.REMOTE_APP_PATH }}/application.yml \
               --spring.profiles.active=prod \
               > ${{ secrets.REMOTE_APP_PATH }}/app.log 2>&1 &
