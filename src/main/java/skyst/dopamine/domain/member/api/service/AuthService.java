@@ -21,9 +21,6 @@ public class AuthService {
 
     public MemberRes getUserInfo(String accessToken) {
         KakaoUserInfoRes kakaoUserInfo = kakaoClientApi.getUserInfo(accessToken);
-
-        System.out.println(kakaoUserInfo);
-
         MemberRes memberRes = new MemberRes(kakaoUserInfo.id(), kakaoUserInfo.kakao_account().profile().nickname() ,kakaoUserInfo.kakao_account().email());
         return memberRes;
     }
