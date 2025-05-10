@@ -3,6 +3,7 @@ package skyst.dopamine.domain.chatbot.api.service;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
 import javax.sound.sampled.AudioFileFormat;
@@ -18,6 +19,7 @@ import com.google.cloud.speech.v1.SpeechClient;
 import com.google.cloud.speech.v1.SpeechRecognitionAlternative;
 import com.google.protobuf.ByteString;
 
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -53,7 +55,8 @@ public class AudioService {
      * 모노(1채널) WAV로 변환 후
      * Google STT 변환 → DB 저장
      */
-    public Transcript transcribeFromS3(String key) throws Exception {
+    @Transactional
+    public Transcript transcribeFromS3(String key, Long question_id) throws Exception {
         logger.info("Starting transcription for S3 key: {}", key);
 
         // 1) S3에서 바이트 읽기
@@ -108,6 +111,8 @@ public class AudioService {
         Transcript entity = new Transcript();
         entity.setAudioKey(key);
         entity.setTranscriptText(transcriptText);
+        entity.setQuestionId(question_id);
+        entity.setCreatedAt(LocalDateTime.now());
         Transcript saved;
         try {
             logger.debug("Saving transcript to DB");

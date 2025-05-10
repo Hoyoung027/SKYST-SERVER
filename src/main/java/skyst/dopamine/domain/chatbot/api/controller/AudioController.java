@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,8 +35,8 @@ public class AudioController {
         this.bucket = bucket;
     }
 
-    @PostMapping( path ="/upload-audio", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> uploadAudio(@RequestParam("file") MultipartFile file) {
+    @PostMapping( path ="/upload-audio/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> uploadAudio(@RequestParam("file") MultipartFile file, @PathVariable Long id) {
         try {
             // 1) S3에 저장할 고유 키 생성
             String key = "audio/" +
@@ -53,7 +54,7 @@ public class AudioController {
                     RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
 
             try {
-                Transcript saved = audioService.transcribeFromS3(key);
+                Transcript saved = audioService.transcribeFromS3(key, id);
                 return ResponseEntity.ok(saved);
             } catch (Exception e) {
                 return ResponseEntity.status(500).build();
@@ -66,15 +67,15 @@ public class AudioController {
         }
     }
 
-    @PostMapping("/transcribe")
-    public ResponseEntity<Transcript> transcribeExisting(
-            @RequestParam("key") String s3Key) {
-        try {
-            Transcript saved = audioService.transcribeFromS3(s3Key);
-            return ResponseEntity.ok(saved);
-        } catch (Exception e) {
-            return ResponseEntity.status(500).build();
-        }
-    }
+//    @PostMapping("/transcribe")
+//    public ResponseEntity<Transcript> transcribeExisting(
+//            @RequestParam("key") String s3Key) {
+//        try {
+//            Transcript saved = audioService.transcribeFromS3(s3Key);
+//            return ResponseEntity.ok(saved);
+//        } catch (Exception e) {
+//            return ResponseEntity.status(500).build();
+//        }
+//    }
 
 }
