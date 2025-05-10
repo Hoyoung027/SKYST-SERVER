@@ -60,6 +60,7 @@ dependencies {
 	implementation('com.google.cloud:google-cloud-speech') {
 		exclude group: 'com.google.guava', module: 'listenablefuture'
 	}
+	implementation 'com.google.protobuf:protobuf-java'
 }
 
 tasks.named('test') {
