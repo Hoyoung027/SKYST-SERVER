@@ -16,13 +16,11 @@ public class ChatbotController {
 
     private final ChatbotService chatbotService;
 
-    @PostMapping("/chat")
-    public Mono<ResponseEntity<String>> chat(@RequestBody ChatReq userQuestion) {
+    @PostMapping("/chat/{id}")
+    public Mono<ResponseEntity<String>> chat(@RequestBody ChatReq userQuestion,
+    @PathVariable Long id) {
 
-        String prompt = chatbotService.askWithHistory(userQuestion);
-
-
-
+        String prompt = chatbotService.askWithHistory(userQuestion, id);
 
         return chatbotService.chatCompletion(prompt)
                 .map(ResponseEntity::ok)
@@ -30,5 +28,4 @@ public class ChatbotController {
                         ResponseEntity.status(500).body(e.getMessage())
                 ));
     }
-
 }
