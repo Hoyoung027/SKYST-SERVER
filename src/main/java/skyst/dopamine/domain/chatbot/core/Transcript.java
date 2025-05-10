@@ -19,8 +19,9 @@ public class Transcript {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "question_id")
-    private Long questionId;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "question_id")
+    private Question question;
 
     @Column(name = "audio_key", nullable = false, length = 255)
     private String audioKey;
