@@ -2,13 +2,13 @@ package skyst.dopamine.domain.photo.api.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import skyst.dopamine.domain.photo.core.photobooth.PhotoBooth;
 import skyst.dopamine.domain.photo.api.service.PhotoBoothService;
+import skyst.dopamine.domain.photo.core.photobooth.PhotoBooth;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/photo")
+@RequestMapping("/showing")
 @RequiredArgsConstructor
 public class PhotoBoothController {
 
@@ -17,5 +17,10 @@ public class PhotoBoothController {
     @GetMapping
     public List<PhotoBooth> getPhotosByCategory(@RequestParam String category) {
         return photoBoothService.findByCategory(category);
+    }
+
+    @GetMapping("/{photoId}")
+    public PhotoBooth getPhotoDetail(@PathVariable Long photoId) {
+        return photoBoothService.getById(photoId);
     }
 }
