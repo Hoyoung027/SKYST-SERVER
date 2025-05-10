@@ -22,10 +22,11 @@ public class ChatbotController {
 
         String prompt = chatbotService.askWithHistory(userQuestion, id);
 
-        return chatbotService.chatCompletion(prompt)
+        return chatbotService
+                .chatAndSaveHistory(userQuestion, prompt, id)
                 .map(ResponseEntity::ok)
-                .onErrorResume(e -> Mono.just(
-                        ResponseEntity.status(500).body(e.getMessage())
-                ));
+                .onErrorResume(e ->
+                        Mono.just(ResponseEntity.status(500).body(e.getMessage()))
+                );
     }
 }
