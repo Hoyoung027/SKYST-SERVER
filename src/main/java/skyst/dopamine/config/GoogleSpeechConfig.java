@@ -22,7 +22,7 @@ public class GoogleSpeechConfig {
     @Bean
     public SpeechClient speechClient() throws IOException {
         GoogleCredentials creds = GoogleCredentials
-                .fromStream(credentialsResource.getInputStream())
+                .fromStream(credentialsResource.getInputStream()) // 여기서 API KEY를 불러옴
                 .createScoped(List.of("https://www.googleapis.com/auth/cloud-platform"));
 
         SpeechSettings settings = SpeechSettings.newBuilder()
