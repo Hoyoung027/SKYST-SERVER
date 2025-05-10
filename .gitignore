@@ -5,6 +5,7 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 application.yml
+woven-surface-459409-e4-22a26901a110.json
 
 ### STS ###
 .apt_generated
