@@ -1,12 +1,15 @@
 package skyst.dopamine.domain.chatbot.api.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 import skyst.dopamine.domain.chatbot.api.dto.ChatReq;
 import skyst.dopamine.domain.chatbot.api.dto.QuestionTranscriptDto;
 import skyst.dopamine.domain.chatbot.core.*;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.Map;
@@ -56,12 +59,44 @@ public class ChatbotService {
         return prompt;
     }
 
-    public Mono<String> chatCompletion(String prompt) {
+    public Mono<String> chatAndSaveHistory(ChatReq chatReq, String prompt, Long userId) {
+        // 1) GPT API 호출
+        Mono<String> answerMono = chatCompletion(chatReq, prompt);
+
+        // 2) 기존 히스토리 조회 (blocking JPA → boundedElastic)
+        Mono<ChatbotHistory> historyMono = Mono.fromCallable(() ->
+                        chatbotHistoryRepository.findChatbotHistoryByMemberId(userId)
+                )
+                .subscribeOn(Schedulers.boundedElastic());
+
+        // 3) 답변 + 히스토리 합쳐서 저장
+        return Mono.zip(answerMono, historyMono)
+                .flatMap(tuple -> {
+                    String answer = tuple.getT1();
+                    ChatbotHistory history = tuple.getT2();
+
+                    // 누적할 포맷 예시
+                    String appended = history.getContent()
+                            + "\n\n[사용자] " + chatReq.userQuestion().strip()
+                            + "\n[GPT] " + answer.strip();
+
+                    history.setContent(appended);
+
+                    // 4) 저장 (blocking JPA → boundedElastic)
+                    return Mono.fromCallable(() ->
+                                    chatbotHistoryRepository.save(history)
+                            )
+                            .subscribeOn(Schedulers.boundedElastic())
+                            // 저장 후 원래의 answer만 흘려보냄
+                            .thenReturn(answer);
+                });
+    }
+
+    public Mono<String> chatCompletion(ChatReq chatReq, String prompt) {
         Map<String, Object> userMessage = Map.of(
                 "role", "user",
                 "content", prompt
         );
-
         Map<String, Object> requestBody = Map.of(
                 "model", "gpt-3.5-turbo",
                 "messages", List.of(userMessage)
