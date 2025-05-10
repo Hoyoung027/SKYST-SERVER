@@ -8,7 +8,7 @@ import skyst.dopamine.domain.music.core.playlist.Playlist;
 import java.util.List;
 
 @RestController
-@RequestMapping("playlist")
+@RequestMapping("/playlist")
 @RequiredArgsConstructor
 public class PlaylistController {
 
