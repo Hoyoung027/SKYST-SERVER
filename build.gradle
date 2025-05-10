@@ -17,6 +17,12 @@ repositories {
 	mavenCentral()
 }
 
+dependencyManagement {
+	imports {
+		mavenBom "com.google.cloud:google-cloud-bom:0.202.0"
+	}
+}
+
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
@@ -47,6 +53,14 @@ dependencies {
 	// Redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
+	// AWS SDK v2 (S3)
+	implementation 'software.amazon.awssdk:s3:2.20.0'
+
+	// Google Cloud Speech-to-Text
+	implementation('com.google.cloud:google-cloud-speech') {
+		exclude group: 'com.google.guava', module: 'listenablefuture'
+	}
+	implementation 'com.google.protobuf:protobuf-java'
 }
 
 tasks.named('test') {
