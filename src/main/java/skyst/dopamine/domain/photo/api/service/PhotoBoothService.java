@@ -16,4 +16,9 @@ public class PhotoBoothService {
     public List<PhotoBooth> findByCategory(String category) {
         return photoBoothRepository.findByCategory(category);
     }
+
+    public PhotoBooth getById(Long id) {
+        return photoBoothRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 사진이 존재하지 않습니다. id = " + id));
+    }
 }
