@@ -89,6 +89,7 @@ public class AudioService {
         logger.debug("RecognitionConfig: encoding={}, sampleRate={}, language={}",
                 config.getEncoding(), config.getSampleRateHertz(), config.getLanguageCode());
 
+
         RecognitionAudio audio = RecognitionAudio.newBuilder()
                 .setContent(ByteString.copyFrom(monoBytes))
                 .build();
