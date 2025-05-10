@@ -114,6 +114,7 @@ public class AudioService {
         entity.setQuestionId(question_id);
         entity.setCreatedAt(LocalDateTime.now());
         Transcript saved;
+
         try {
             logger.debug("Saving transcript to DB");
             saved = transcriptRepository.save(entity);
