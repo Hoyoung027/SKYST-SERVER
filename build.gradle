@@ -57,7 +57,9 @@ dependencies {
 	implementation 'software.amazon.awssdk:s3:2.20.0'
 
 	// Google Cloud Speech-to-Text
-	implementation 'com.google.cloud:google-cloud-speech'
+	implementation('com.google.cloud:google-cloud-speech') {
+		exclude group: 'com.google.guava', module: 'listenablefuture'
+	}
 }
 
 tasks.named('test') {
