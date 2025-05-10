@@ -17,7 +17,8 @@ public class CorsConfig {
         config.setAllowedOrigins(List.of(
                 "http://localhost:5173",
                 "https://52.78.1.42",
-                "https://likelion-yonsei.shop"
+                "https://likelion-yonsei.shop",
+                "http://localhost:3000"
         )); // 허용할 Origin
         config.setAllowedMethods(List.of("GET", "POST", "DELETE")); // 허용할 HTTP Method
         config.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept", "refreshToken")); // 허용할 요청 헤더
