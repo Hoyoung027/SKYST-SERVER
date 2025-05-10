@@ -3,12 +3,10 @@ package skyst.dopamine.domain.photo.core.photobooth;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
-
 @Entity
 @Table(name = "photo_booth")
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Setter
 @AllArgsConstructor
 @Builder
 public class PhotoBooth {
@@ -19,7 +17,11 @@ public class PhotoBooth {
 
     private String imageUrl;
     private String title;
-    private LocalDateTime date;
+    private String date;
     private String category;
     private String content;
+
+    public PhotoBooth(){
+    }
+
 }
