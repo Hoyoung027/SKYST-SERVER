@@ -69,3 +69,4 @@
 |-------|------------------------------------|
 | 백엔드   | Spring Boot, AWS EC2/S3/RDS, MySQL |
 | 프론트엔드 | React JS                           |
+| API   | gpt-4-turbo, Google Speech-to-Text |
