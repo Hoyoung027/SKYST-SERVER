@@ -53,8 +53,6 @@ public class ChatbotService {
 
         prompt += user_prompt;
 
-//        System.out.println(prompt);
-
         return prompt;
     }
 
