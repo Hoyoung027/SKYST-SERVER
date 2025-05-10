@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import skyst.dopamine.domain.chatbot.core.QuestionRepository;
 import skyst.dopamine.domain.chatbot.core.Transcript;
 import skyst.dopamine.domain.chatbot.core.TranscriptRepository;
 import software.amazon.awssdk.core.ResponseBytes;
@@ -39,15 +40,18 @@ public class AudioService {
     private final String bucket;
     private final SpeechClient speechClient;
     private final TranscriptRepository transcriptRepository;
+    private final QuestionRepository questionRepository;
 
     public AudioService(S3Client s3,
                         @Value("${aws.s3.audio-bucket}") String bucket,
                         SpeechClient speechClient,
-                        TranscriptRepository transcriptRepository) {
+                        TranscriptRepository transcriptRepository,
+                        QuestionRepository questionRepository) {
         this.s3 = s3;
         this.bucket = bucket;
         this.speechClient = speechClient;
         this.transcriptRepository = transcriptRepository;
+        this.questionRepository = questionRepository;
     }
 
     /**
@@ -111,7 +115,7 @@ public class AudioService {
         Transcript entity = new Transcript();
         entity.setAudioKey(key);
         entity.setTranscriptText(transcriptText);
-        entity.setQuestionId(question_id);
+        entity.setQuestion(questionRepository.findById(question_id).get());
         entity.setCreatedAt(LocalDateTime.now());
         Transcript saved;
 
