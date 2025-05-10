@@ -83,7 +83,7 @@ public class AudioService {
         // 3) Google STT 호출 설정
         RecognitionConfig config = RecognitionConfig.newBuilder()
                 .setEncoding(RecognitionConfig.AudioEncoding.LINEAR16)
-                .setSampleRateHertz(44100)
+//                .setSampleRateHertz(44100)
                 .setLanguageCode("ko-KR")
                 .build();
         logger.debug("RecognitionConfig: encoding={}, sampleRate={}, language={}",
