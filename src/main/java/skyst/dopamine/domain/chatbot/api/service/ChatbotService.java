@@ -6,9 +6,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import skyst.dopamine.domain.chatbot.api.dto.ChatReq;
 import skyst.dopamine.domain.chatbot.api.dto.QuestionTranscriptDto;
-import skyst.dopamine.domain.chatbot.core.QuestionRepository;
-import skyst.dopamine.domain.chatbot.core.Transcript;
-import skyst.dopamine.domain.chatbot.core.TranscriptRepository;
+import skyst.dopamine.domain.chatbot.core.*;
 
 import java.util.List;
 import java.util.Map;
@@ -21,8 +19,9 @@ public class ChatbotService {
     private final WebClient openAIWebClient;
     private final TranscriptRepository transcriptRepository;
     private final QuestionRepository questionRepository;
+    private final ChatbotHistoryRepository chatbotHistoryRepository;
 
-    public String askWithHistory(ChatReq chatReq) {
+    public String askWithHistory(ChatReq chatReq, Long userId) {
 
         Long maxQuestions = questionRepository.count();
 
@@ -43,13 +42,18 @@ public class ChatbotService {
 
         prompt += prior_prompt;
 
-        String user_prompt = "\n이제 앞서 제시한 인물과 대화를 나누고 싶은 사용자가 새로운 질문을 했습니다.\n 질문은 다음과 같습니다."
+        ChatbotHistory chat_history = chatbotHistoryRepository.findChatbotHistoryByMemberId(userId);
+
+        prompt += "\n앞서 질문에 대답한 사람과 이야기를 나누고 싶은 사용자가 이때까지 나눈 대화 목록은 아래와 같습니다." + chat_history.getContent();
+
+        String user_prompt = "\n이제 앞서 제시한 인물과 대화를 나누고 싶은 사용자가 새로운 질문을 했습니다.\n 질문은 다음과 같습니다.\n"
                 + chatReq.userQuestion()
-                + "위 JSON의 말투와 사고방식을 참고하여, 마치 그 인물이 직접 대답하는 것처럼 자연스럽고 일관된 말투로 아래에 답해주세요."
+                + "\n위 말투와 사고방식을 참고하여, 마치 그 인물이 직접 대답하는 것처럼 자연스럽고 일관된 말투로 아래에 답해주세요."
                 + "\n[답변]";
+
         prompt += user_prompt;
 
-        System.out.println(prompt);
+//        System.out.println(prompt);
 
         return prompt;
     }
